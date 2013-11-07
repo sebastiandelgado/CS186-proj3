@@ -1,0 +1,7 @@
+STEP 3: simpledb.Parser.handleQueryStatement()
+
+simpledb.Parser.handleQueryStatement() generates a physical plan by first calling simpledb.Parser.parseQueryLogicalPlan() to generate a logical plan and then calling simpledb.LogicalPlan.physicalPlan() on said logical plan. It then attaches the logical and physcal plans to a new query that it returns to simpledb.Parser.processNextStatement. 
+
+STEP 4: simpledb.Parser.parseQueryLogicalPlan()
+
+parseQueryLogicalPlan initializes a virgin simpledb.LogicalPlan and then (1) adds scans of all of the tables in the SELECT statement, (2) parses the WHERE clause, creating filter and join nodes where necessary, (3)

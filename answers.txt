@@ -1,0 +1,15 @@
+STEP 3: simpledb.Parser.handleQueryStatement()
+
+simpledb.Parser.handleQueryStatement() generates a physical plan by first calling simpledb.Parser.parseQueryLogicalPlan() to generate a logical plan and then calling simpledb.LogicalPlan.physicalPlan() on said logical plan. It then attaches the logical and physcal plans to a new query that it returns to simpledb.Parser.processNextStatement. 
+
+STEP 4: simpledb.Parser.parseQueryLogicalPlan()
+
+parseQueryLogicalPlan initializes a virgin simpledb.LogicalPlan and then (1) adds logical scan nodes to the logical plan of all of the tables in the SELECT statement, (2) parses the WHERE clause, creating and adding filter and join nodes to the logical plan using simpledb.Parser.processExpression(), (3) sets a single, valid GROUP BY field, if there is one, (4) looks at the select list and adds the fields that need projecting to the logical plan, including an aggregate function to the fields that have one, and finally (5) adds the order by field and order (ASC/DESC) to the logical plan
+
+Step (2) deserves more explanation: processExpression() basically determines what is in the WHERE clause to add a filter node with a particular column, operation and comparison value to the logical plan or a join node with each table's field and the operation used to join. It also calls itself to process AND expressions.
+
+At this point, the logical plan for the query has (1) scan nodes for the tables in the query, (2) filter and join nodes, (3) a valid GROUP BY field, (4) list of fields to project (with aggregates) and (5) sorting information.
+
+STEP 5: simpledb.LogicalPlan.physicalPlan()
+
+This step is called by Parser.handleQueryStatement() in step 3 to spawn a physical plan from the logical plan created in step 4. Here is where the parameters established in the logical plan are optimized to generate an efficient plan for execution. 
