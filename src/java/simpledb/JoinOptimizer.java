@@ -112,7 +112,8 @@ public class JoinOptimizer {
             // HINT: You may need to use the variable "j" if you implemented
             // a join algorithm that's more complicated than a basic nested-loops
             // join.
-            return ((double) (card1 + card2)) + (cost1 * cost2);
+            //return ((double) (card1 + card2)) + (cost1 * cost2);
+	    return (cost1 + (((double)card1) * cost2)) + ((double)(card1 * card2));
         }
     }
 
@@ -226,13 +227,35 @@ public class JoinOptimizer {
             HashMap<String, TableStats> stats,
             HashMap<String, Double> filterSelectivities, boolean explain)
             throws ParsingException {
-
-        // See the project writeup for some hints as to how this function
-        // should work.
-
         // some code goes here
-        //Replace the following
-        return joins;
+	PlanCache pc = new PlanCache();
+	for (int i = 1; i <= joins.size(); i++) {
+	    System.out.println("i = " + i);
+	    Iterator<Set<LogicalJoinNode>> joinSets = enumerateSubsets(joins, i).iterator();
+	    while (joinSets.hasNext()) {
+		CostCard bestPlan = null;
+		double bestCostSoFar = Double.MAX_VALUE;
+		Set<LogicalJoinNode> joinSet = joinSets.next();
+		Iterator<LogicalJoinNode> joinsToRemove = joinSet.iterator();
+		while (joinsToRemove.hasNext()) {
+		    LogicalJoinNode joinToRemove = joinsToRemove.next();
+		    CostCard currentPlan = computeCostAndCardOfSubplan(stats,
+								       filterSelectivities,
+								       joinToRemove,
+								       joinSet,
+								       bestCostSoFar,
+								       pc);
+		    if (currentPlan == null) { continue; }
+		    if ((bestPlan == null) || ((bestPlan.cost - 0.1) > currentPlan.cost )) {
+			bestPlan = currentPlan;
+		    }
+		}
+		if (bestPlan != null) {
+		    pc.addPlan(joinSet, bestPlan.cost, bestPlan.card, bestPlan.plan);
+		}
+	    } 
+	}
+        return pc.getOrder(new HashSet<LogicalJoinNode>(joins));
     }
 
     // ===================== Private Methods =================================
