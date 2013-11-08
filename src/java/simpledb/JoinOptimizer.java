@@ -5,6 +5,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 
+
 /**
  * The JoinOptimizer class is responsible for ordering a series of joins
  * optimally, and for selecting the best instantiation of a join for a given
@@ -111,8 +112,7 @@ public class JoinOptimizer {
             // HINT: You may need to use the variable "j" if you implemented
             // a join algorithm that's more complicated than a basic nested-loops
             // join.
-	    
-            return -1.0;
+            return ((double) (card1 + card2)) + (cost1 * cost2);
         }
     }
 
@@ -157,8 +157,16 @@ public class JoinOptimizer {
             Map<String, Integer> tableAliasToId) {
         int card = 1;
         // some code goes here
-	
-        return card <= 0 ? 1 : card;
+	if (joinOp == Predicate.Op.EQUALS) {
+	    if (t1pkey && t2pkey) { return 1;
+	    } else if (t1pkey) { return card2;
+	    } else if (t2pkey) { return card1;
+	    } else { return card1 > card2 ? card1 : card2; }
+	} else if (joinOp == Predicate.Op.NOT_EQUALS) {
+	    return card1 > card2 ? card1 : card2;
+	} else { // Its a range operation
+	    return new Double(0.3 * ((double)(card1 * card2))).intValue();
+	}
     }
 
     /**
