@@ -607,9 +607,9 @@ public class Parser {
     protected void start(String[] argv) throws IOException {
         // first add tables to database
         Database.getCatalog().loadSchema(argv[0]);
-	try { TableStats.computeStatistics(); } 
-	catch (DbException e) { System.out.println("sum ting wong"); }
-	catch (TransactionAbortedException e) { System.out.println("sum ting very wong"); }
+	try {
+            TableStats.computeStatistics();
+	} catch (DbException e) { System.out.println("sum ting wong"); }
         String queryFile = null;
 
         if (argv.length > 1) {

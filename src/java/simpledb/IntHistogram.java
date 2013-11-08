@@ -93,8 +93,8 @@ public class IntHistogram implements Histogram {
 	if (opString.equals("<>")) { return 1.0 - probEquals; }
 	if (opString.equals("<")) { return probLessThan; }
 	if (opString.equals("<=")) { return probLessThan + probEquals; }
-	if (opString.equals(">")) { return 1.0 - probLessThan; }
-	if (opString.equals(">=")) { return (1.0 - probLessThan) + probEquals; }
+	if (opString.equals(">")) { return 1.0 - probLessThan - probEquals; }
+	if (opString.equals(">=")) { return (1.0 - probLessThan); }
 	return -1.0;
     }
     public double estimateSelectivity(Predicate.Op op, String s) {

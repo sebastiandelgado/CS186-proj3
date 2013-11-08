@@ -89,7 +89,10 @@ public class TableStats {
 	HeapFile hf = (HeapFile) Database.getCatalog().getDbFile(tableid);
 	td = hf.getTupleDesc();
 	scanCost = ioCostPerPage * hf.numPages();
-
+	cardinality = 0.0;
+	fieldHistograms = new Histogram[td.numFields()];
+	
+	
 	// Get maxes and mins for every INT field, each field has an array: [min, max]
 	IntField[][] minimaxes = new IntField[td.numFields()][2];
 	for (int field = 0; field < td.numFields(); field++) {
@@ -115,7 +118,6 @@ public class TableStats {
 		hfit.close();
 
 		// Populate the fieldHistograms with empty histograms
-		Histogram[] fieldHistograms = new Histogram[td.numFields()];
 		for (int field = 0; field < td.numFields(); field++) {
 		    if (td.getFieldType(field) == Type.INT_TYPE) {
 			int min = minimaxes[field][0].getValue();
@@ -128,7 +130,6 @@ public class TableStats {
 		    }
 		}
 		// Add all of the values in the table to the histograms and get cardinality
-		cardinality = 0.0;
 		DbFileIterator hfit2 = hf.iterator(new TransactionId());
 		hfit2.open();
 		while (hfit2.hasNext()) {
@@ -146,7 +147,10 @@ public class TableStats {
 		}
 		hfit2.close();
 	} catch (DbException e) {
-	} catch (TransactionAbortedException e) {}
+		System.out.println("caught a db exception");
+	} catch (TransactionAbortedException e) {
+		System.out.println("caught a transaction aborted exception");
+	}
     }
     
 

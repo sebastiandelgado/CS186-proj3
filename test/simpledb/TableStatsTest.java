@@ -114,9 +114,8 @@ public class TableStatsTest extends SimpleDbTestBase {
 		final Field halfMaxMin = new IntField(maxCellVal/2);
 		final Field atMin = new IntField(0);
 		final Field belowMin = new IntField(-10);
-		
 		TableStats s = new TableStats(this.tableId, IO_COST);
-		System.out.println(s.getHistograms());
+		
 		for (int col = 0; col < 10; col++) {
 			Assert.assertEquals(0.0, s.estimateSelectivity(col, Predicate.Op.EQUALS, aboveMax), 0.001);			
 			Assert.assertEquals(1.0/32.0, s.estimateSelectivity(col, Predicate.Op.EQUALS, halfMaxMin), 0.015);
