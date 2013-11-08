@@ -100,7 +100,6 @@ public class IntHistogram implements Histogram {
     public double estimateSelectivity(Predicate.Op op, String s) {
 	// do nothing, just here to satisfy interface
 	System.out.println("Estimating selectivity using a String in IntHistogram (this should never happen)");
-	return -1.0;
     }
     
     /**
